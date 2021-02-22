@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://tilesets/placeholder/placeholder.tres" type="TileSet" id=1]
+[ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
 
 [node name="Main" type="Node2D"]
 
@@ -8,3 +9,7 @@
 tile_set = ExtResource( 1 )
 cell_size = Vector2( 21, 21 )
 format = 1
+tile_data = PoolIntArray( 917512, 0, 0, 917513, 0, 0, 917514, 0, 0, 983048, 1, 0, 983049, 1, 0, 983050, 1, 0, 983051, 0, 0, 983052, 0, 0, 983053, 0, 0, 983054, 0, 0, 983055, 0, 0, 983056, 0, 0, 983057, 0, 0, 983058, 0, 0, 983059, 0, 0, 1048586, 1, 0, 1048587, 1, 0, 1048588, 1, 0, 1048589, 1, 0, 1048590, 1, 0, 1048591, 1, 0, 1048592, 1, 0, 1048593, 1, 0, 1048594, 1, 0, 1048595, 1, 0, 1048596, 0, 0, 1048597, 0, 0, 1048598, 0, 0, 1048599, 0, 0, 1048600, 0, 0, 1048601, 0, 0, 1048602, 0, 0, 1048603, 0, 0, 1114131, 1, 0, 1114132, 1, 0, 1114133, 1, 0, 1114134, 1, 0, 1114135, 1, 0, 1114136, 1, 0, 1114137, 1, 0, 1114138, 1, 0, 1114139, 1, 0 )
+
+[node name="KinematicBody2D" parent="." instance=ExtResource( 2 )]
+position = Vector2( 461.034, 200.632 )
