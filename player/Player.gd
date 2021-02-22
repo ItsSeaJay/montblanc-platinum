@@ -1,10 +1,13 @@
 extends KinematicBody2D
 
+export (int) var jump_height = 128
+export (int) var jump_duration = 2
 export (int) var run_speed = 100
-export (int) var jump_speed = -400
-export (int) var gravity = 1200
 export (int) var acceleration = 1200
 export (int) var friction = 1200
+
+var jump_speed = -((2 * jump_height) / jump_duration)
+var gravity = -(-2 * jump_height / (jump_duration * jump_duration))
 
 var velocity = Vector2()
 var jumping = false
