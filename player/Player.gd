@@ -1,13 +1,15 @@
 extends KinematicBody2D
 
-export (int) var jump_height = 128
-export (int) var jump_duration = 2
+export (int) var jump_height = 32
+export (int) var jump_distance = 32
+
 export (int) var run_speed = 100
 export (int) var acceleration = 1200
 export (int) var friction = 1200
 
-var jump_speed = -get_jump_speed(jump_height, jump_duration)
-var gravity = -get_gravity(jump_height, jump_duration)
+var jump_duration = 2
+var jump_speed = -get_jump_speed2(jump_height, run_speed, jump_distance)
+var gravity = -get_gravity2(jump_height, run_speed, jump_distance)
 
 var velocity = Vector2()
 var jumping = false
@@ -40,3 +42,9 @@ func get_jump_speed(height, duration):
 
 func get_gravity(height, duration):
 	return (-2 * jump_height) / (jump_duration * jump_duration)
+
+func get_jump_speed2(height, speed, distance):
+	return (2 * height * speed) / distance
+
+func get_gravity2(height, speed, distance):
+	return (-2 * height * (speed * speed)) / (distance * distance)
