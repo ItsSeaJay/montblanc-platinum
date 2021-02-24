@@ -1,10 +1,8 @@
 extends KinematicBody2D
 
 enum State {
-	STATE_IDLE,
-	STATE_RUN,
+	STATE_GROUNDED,
 	STATE_JUMP,
-	STATE_JUMP_CANCEL,
 	STATE_FALL,
 }
 
@@ -14,21 +12,19 @@ export (int) var jump_ascend_distance = 128
 export (int) var jump_descend_distance = 64
 
 export (int) var run_speed = 128
-export (int) var acceleration = 512
-export (int) var friction = 512
+export (int) var acceleration = 1024
+export (int) var friction = 1024
 
 var jump_duration = 2
-var jump_speed = -get_jump_speed(jump_height_min, run_speed, jump_ascend_distance)
+var jump_speed = -get_jump_speed(jump_height_max, run_speed, jump_ascend_distance)
 var jump_gravity_min = -get_gravity(jump_height_min, run_speed, jump_ascend_distance)
 var jump_gravity_max = -get_gravity(jump_height_max, run_speed, jump_ascend_distance)
 var fall_gravity = -get_gravity(jump_height_max, run_speed, jump_descend_distance)
 
-var gravity = jump_gravity_min
-
 var velocity = Vector2()
 var jumping = false
 
-var state = State.STATE_IDLE
+var state = State.STATE_GROUNDED
 
 func _physics_process(delta):
 	var right = Input.is_action_pressed('ui_right')
@@ -39,29 +35,24 @@ func _physics_process(delta):
 	print(str(state))
 
 	match(state):
-		State.STATE_IDLE:
-			if right or left:
-				state = State.STATE_RUN
-			
-			if jump and is_on_floor():
-				velocity.y = jump_speed
-				gravity = jump_gravity_max
-				state = State.STATE_JUMP
-		State.STATE_RUN:
+		State.STATE_GROUNDED:
 			if right:
 				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
 			elif left:
 				velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
 			else:
 				velocity.x = Global.approach(velocity.x, 0, friction * delta)
-				
-				if velocity.x == 0:
-					state = State.STATE_IDLE
 			
-			if jump and is_on_floor():
-				velocity.y = jump_speed
-				gravity = jump_gravity_max
-				state = State.STATE_JUMP
+			# NOTE: The player has to have gravity applied in this state to
+			#       prevent erratic state behavior
+			velocity.y += fall_gravity * delta
+			
+			if is_on_floor():
+				if jump:
+					velocity.y = jump_speed
+					state = State.STATE_JUMP
+			else:
+				state = State.STATE_FALL
 		State.STATE_JUMP:
 			if right:
 				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
@@ -70,14 +61,18 @@ func _physics_process(delta):
 			else:
 				velocity.x = Global.approach(velocity.x, 0, friction * delta)
 			
+			velocity.y += jump_gravity_max * delta
+			
+			if velocity.y >= 0:
+				state = State.STATE_FALL
+			
 			if is_on_floor():
-				state = State.STATE_RUN
-	
-	if not is_on_floor():
-		if velocity.y > 0:
-			gravity = fall_gravity
-	
-	velocity.y += gravity * delta
+				state = State.STATE_GROUNDED
+		State.STATE_FALL:
+			velocity.y += fall_gravity * delta
+			
+			if is_on_floor():
+				state = State.STATE_GROUNDED
 	
 	velocity = move_and_slide(velocity, Vector2.UP)
 
