@@ -1,7 +1,7 @@
 extends State
 
-export(int) var jump_height = 4
-export(int) var jump_distance = 4
+export(int) var jump_height = 8
+export(int) var jump_distance = 8
 export(int) var move_speed = 128
 export(int) var acceleration = 2048
 export(int) var friction = 2048
