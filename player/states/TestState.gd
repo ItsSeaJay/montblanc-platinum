@@ -1,7 +1,7 @@
 extends State
 
-func update(delta):
+func handle_update(delta):
 	print(delta)
 	
 	if Input.is_action_just_released("ui_accept"):
-		transition("IdleState")
+		emit_signal("state_finished", "IdleState")

@@ -1,11 +1,10 @@
 class_name State
 extends Node
 
-func input(event):
+signal state_finished
+
+func handle_input(event):
 	pass
 
-func update(delta):
+func handle_update(delta):
 	pass
-
-func transition(new_state):
-	get_parent().current_state = get_node(get_parent().states[new_state])
