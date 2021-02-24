@@ -3,23 +3,23 @@ extends KinematicBody2D
 enum State {
 	STATE_GROUNDED,
 	STATE_JUMP,
+	STATE_JUMP_CANCEL,
 	STATE_FALL,
 }
 
-export (int) var jump_height_min = 32
-export (int) var jump_height_max = 128
+export (int) var jump_height = 128
 export (int) var jump_ascend_distance = 128
 export (int) var jump_descend_distance = 64
 
 export (int) var run_speed = 128
-export (int) var acceleration = 1024
-export (int) var friction = 1024
+export (int) var acceleration = 2048
+export (int) var friction = 2048
 
 var jump_duration = 2
-var jump_speed = -get_jump_speed(jump_height_max, run_speed, jump_ascend_distance)
-var jump_gravity_min = -get_gravity(jump_height_min, run_speed, jump_ascend_distance)
-var jump_gravity_max = -get_gravity(jump_height_max, run_speed, jump_ascend_distance)
-var fall_gravity = -get_gravity(jump_height_max, run_speed, jump_descend_distance)
+var jump_speed = -get_jump_speed(jump_height, run_speed, jump_ascend_distance)
+var jump_gravity_min = -get_gravity(jump_height / 4, run_speed, jump_ascend_distance / 4)
+var jump_gravity_max = -get_gravity(jump_height, run_speed, jump_ascend_distance)
+var fall_gravity = -get_gravity(jump_height, run_speed, jump_descend_distance)
 
 var velocity = Vector2()
 var jumping = false
@@ -62,6 +62,24 @@ func _physics_process(delta):
 				velocity.x = Global.approach(velocity.x, 0, friction * delta)
 			
 			velocity.y += jump_gravity_max * delta
+			
+			if velocity.y >= 0:
+				state = State.STATE_FALL
+			
+			if jump_cancel:
+				state = State.STATE_JUMP_CANCEL
+			
+			if is_on_floor():
+				state = State.STATE_GROUNDED
+		State.STATE_JUMP_CANCEL:
+			if right:
+				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
+			elif left:
+				velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
+			else:
+				velocity.x = Global.approach(velocity.x, 0, friction * delta)
+			
+			velocity.y += jump_gravity_min * delta
 			
 			if velocity.y >= 0:
 				state = State.STATE_FALL
