@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "FiniteStateMachine",
 "language": "GDScript",
-"path": "res://player/FiniteStateMachine.gd"
+"path": "res://state/FiniteStateMachine.gd"
 }, {
 "base": "Node",
 "class": "State",

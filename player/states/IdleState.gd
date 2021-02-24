@@ -1,7 +1,14 @@
 extends State
 
-func handle_update(delta):
-	print(delta * 2)
+func update(delta):
+	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right"):
+		emit_signal("state_finished", "RunState")
 	
-	if Input.is_action_just_released("ui_accept"):
-		emit_signal("state_finished", "TestState")
+	owner.velocity.y += owner.fall_gravity
+	
+	if owner.is_on_floor():
+		if Input.is_action_just_pressed("ui_accept"):
+			owner.velocity.y = owner.jump_speed
+			emit_signal("state_finished", "JumpState")
+	else:
+		emit_signal("state_finished", "FallState")

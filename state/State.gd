@@ -3,8 +3,17 @@ extends Node
 
 signal state_finished
 
-func handle_input(event):
+func init():
 	pass
 
-func handle_update(delta):
+func enter():
+	pass
+
+func exit():
+	pass
+
+func input(event):
+	pass
+
+func update(delta):
 	pass
