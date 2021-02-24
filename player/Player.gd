@@ -87,6 +87,13 @@ func _physics_process(delta):
 			if is_on_floor():
 				state = State.STATE_GROUNDED
 		State.STATE_FALL:
+			if right:
+				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
+			elif left:
+				velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
+			else:
+				velocity.x = Global.approach(velocity.x, 0, friction * delta)
+			
 			velocity.y += fall_gravity * delta
 			
 			if is_on_floor():
