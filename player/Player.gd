@@ -1,5 +1,13 @@
 extends KinematicBody2D
 
+enum State {
+	STATE_IDLE,
+	STATE_RUN,
+	STATE_JUMP,
+	STATE_JUMP_CANCEL,
+	STATE_FALL,
+}
+
 export (int) var jump_height_min = 32
 export (int) var jump_height_max = 128
 export (int) var jump_ascend_distance = 128
@@ -20,8 +28,7 @@ var gravity = jump_gravity_min
 var velocity = Vector2()
 var jumping = false
 
-func _ready():
-	print(get_gravity(32, run_speed, jump_ascend_distance))
+var state = State.STATE_IDLE
 
 func _physics_process(delta):
 	var right = Input.is_action_pressed('ui_right')
@@ -29,16 +36,42 @@ func _physics_process(delta):
 	var jump = Input.is_action_just_pressed('ui_select')
 	var jump_cancel = Input.is_action_just_released('ui_select')
 
-	if jump and is_on_floor():
-		velocity.y = jump_speed
-		gravity = jump_gravity_max
-	
-	if right:
-		velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
-	elif left:
-		velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
-	else:
-		velocity.x = Global.approach(velocity.x, 0, friction * delta)
+	print(str(state))
+
+	match(state):
+		State.STATE_IDLE:
+			if right or left:
+				state = State.STATE_RUN
+			
+			if jump and is_on_floor():
+				velocity.y = jump_speed
+				gravity = jump_gravity_max
+				state = State.STATE_JUMP
+		State.STATE_RUN:
+			if right:
+				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
+			elif left:
+				velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
+			else:
+				velocity.x = Global.approach(velocity.x, 0, friction * delta)
+				
+				if velocity.x == 0:
+					state = State.STATE_IDLE
+			
+			if jump and is_on_floor():
+				velocity.y = jump_speed
+				gravity = jump_gravity_max
+				state = State.STATE_JUMP
+		State.STATE_JUMP:
+			if right:
+				velocity.x = Global.approach(velocity.x, run_speed, acceleration * delta)
+			elif left:
+				velocity.x = Global.approach(velocity.x, -run_speed, acceleration * delta)
+			else:
+				velocity.x = Global.approach(velocity.x, 0, friction * delta)
+			
+			if is_on_floor():
+				state = State.STATE_RUN
 	
 	if not is_on_floor():
 		if velocity.y > 0:
