@@ -18,4 +18,5 @@ func update(delta):
 		emit_signal("state_finished", "FallState")
 	
 	if owner.velocity.x == 0:
-		emit_signal("state_finished", "IdleState")
+		if not Input.is_action_pressed("ui_left") and not Input.is_action_pressed("ui_right"):
+			emit_signal("state_finished", "IdleState")

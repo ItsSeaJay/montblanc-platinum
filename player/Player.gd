@@ -1,12 +1,5 @@
 extends KinematicBody2D
 
-enum State {
-	STATE_GROUNDED,
-	STATE_JUMP,
-	STATE_JUMP_CANCEL,
-	STATE_FALL,
-}
-
 export (int) var jump_height = 128
 export (int) var jump_ascend_distance = 128
 export (int) var jump_descend_distance = 64
